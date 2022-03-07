@@ -1,0 +1,37 @@
+{
+  "sampleData": {
+    "fa3a88f3-d19a-426a-ba04-560c1bea5921": {
+      "payload": "sample_data/list_java_1.dwl"
+    },
+    "3e890716-8832-4093-90f2-a0faafd4ef82": {
+      "payload": "sample_data/list_java.dwl"
+    },
+    "d0005f88-d39c-47f1-91d0-600065810d2a": {
+      "payload": "sample_data/list_json.json"
+    },
+    "54e48f16-06a4-4c6b-881d-854f6bd2b5f7": {
+      "payload": "sample_data/list_json_2.json"
+    },
+    "6d5b4157-dc76-48a6-ae23-ceea9ffaf763": {
+      "payload": "sample_data/json.json"
+    },
+    "74e3b0ba-232f-4e74-ab11-4ab96aed9362": {
+      "payload": "sample_data/json_1.json"
+    },
+    "de32b574-dd7a-4bb8-8e7d-f87b8c5fd328": {
+      "payload": "sample_data/java.dwl"
+    },
+    "02d1b116-861d-499b-8a9b-d1d5bdc02e84": {
+      "payload": "sample_data/list_java_2.dwl"
+    },
+    "55da132a-f33a-4fab-977c-b9ae022bd73b": {
+      "payload": "sample_data/list_java_3.dwl"
+    },
+    "965c088d-969d-442d-9a82-349d937c0195": {
+      "payload": "sample_data/list_json.json"
+    },
+    "252d34bf-9f9a-4315-85db-1695686cadf5": {
+      "payload": "sample_data/list_json_3.json"
+    }
+  }
+}

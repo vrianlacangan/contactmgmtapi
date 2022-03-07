@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9a7017f3-b327-4b97-8f39-372d14f3d335" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="6a216a3a-b9e9-480f-93d0-866a87c4662b" >
+		<db:mssql-connection host="${contact.mgmt.db.host}" port="${contact.mgmt.db.port}" user="${contact.mgmt.db.user}" password="${contact.mgmt.db.password}" databaseName="${contact.mgmt.db.database}" />
+	</db:config>
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="49f546c7-1f61-4034-9957-7f23118ffaa0" name="mainRouter" api="api\contactmanagementapi.raml" >
+		<apikit:flow-mappings >
+			<apikit:flow-mapping resource="/extract" action="get" flow-ref="contactmanagementapi-extractFlow" />
+			<apikit:flow-mapping resource="/bulkinsert" action="post" flow-ref="contactmanagementapi-bulkinsertFlow" />
+			<apikit:flow-mapping resource="/insert" action="post" flow-ref="contactmanagementapi-insertFlow" />
+			<apikit:flow-mapping resource="/update" action="patch" flow-ref="contactmanagementapi-updateFlow" />
+			<apikit:flow-mapping resource="/delete" action="delete" flow-ref="contactmanagementapi-deleteFlow" />
+			<apikit:flow-mapping resource="/bulkdelete" action="delete" flow-ref="contactmanagementapi-bulkdeleteFlow" />
+			<apikit:flow-mapping resource="/bulkupdate" action="patch" flow-ref="contactmanagementapi-bulkupdateFlow" />
+		</apikit:flow-mappings>
+	</apikit:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="76fe0729-c6c2-451d-ad4d-796d90a6f60b" file="${env}.mule.app.properties" />
+	<global-property doc:name="Global Property" doc:id="73abf54d-aa25-484e-a21a-748c498813fa" name="env" value="local" />
+	<flow name="contactmanagementapiFlow" doc:id="ce0ddf75-4963-4f53-ab7f-403ee63897f0" >
+		<http:listener doc:name="Listener" doc:id="209ae9e6-f52f-4a70-bf71-370c8af52b5f" config-ref="HTTP_Listener_config" path="/contact/*">
+			<http:error-response >
+				<http:body ><![CDATA[#[output application/json --- 
+{
+	'Message' : 'Executed with Errors',
+	'Details' : 'There is an internal error with the execution process. Kindly check the logs for details.'
+}]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="6f3d5679-ce0a-4e23-9b36-a76f0a6163b2" message='#["####### START OF APPLICATION - CONTACT MANAGMENT API #######"]'/>
+		<apikit:router doc:name="APIkit Router" doc:id="fc04a5c3-5414-4882-908d-7eb2848338a2" config-ref="mainRouter"/>
+		<logger level="INFO" doc:name="Logger" doc:id="6beadbe8-ed9c-417d-998a-56b29abfc820" message='#["####### END OF APPLICATION - CONTACT MANAGMENT API #######"]'/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2a47a002-4c5f-4223-ae07-49e7f3fafd35" type="ANY">
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

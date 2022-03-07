@@ -1,0 +1,41 @@
+{
+  "Identification": {
+    "FirstName": "Alison",
+    "LastName": "Smithson",
+    "DOB": "ullamco",
+    "Gender": "female",
+    "Title": ""
+  },
+  "Address": [
+    {
+      "type ": "molestiae",
+      "number": 88,
+      "street": "First Ave 83",
+      "Unit": "anim",
+      "City": "Houston",
+      "State": "dolorem",
+      "zipcode": "15041"
+    },
+    {
+      "type ": "proident,",
+      "number": 58,
+      "street": "Golden Gate Ave 26",
+      "Unit": "voluptate",
+      "City": "Paris",
+      "State": "voluptate",
+      "zipcode": "12437"
+    }
+  ],
+  "Communication": [
+    {
+      "type": "nulla",
+      "value": "54.41",
+      "preferred": "dolor"
+    },
+    {
+      "type": "eos",
+      "value": "20.67",
+      "preferred": "dolore"
+    }
+  ]
+}

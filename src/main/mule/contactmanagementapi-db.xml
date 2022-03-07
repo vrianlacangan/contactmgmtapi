@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="selectSpecifiedEmailSub" doc:id="0c945e0b-84cb-4d2f-af84-586c4c3c316a" >
+		<db:select doc:name="Select Email Specified" doc:id="6bd1fb51-9dc3-4ed2-9992-1470eac670ee" config-ref="Database_Config" >
+			<db:sql ><![CDATA[${contact.mgmt.extract}]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	email:vars.varEmail
+}]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="selectAllSub" doc:id="2bab2a74-522a-48ca-8c57-2357f0cf76b1" >
+		<db:select doc:name="Select All" doc:id="f10d2ac0-1325-4506-8470-8cb325101a8a" config-ref="Database_Config" >
+			<db:sql ><![CDATA[${contact.mgmt.extract.all}]]></db:sql>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="selectEmailSub" doc:id="f2c76112-b32f-401b-bc07-1b35012411f7">
+		<db:select doc:name="Select" doc:id="d1431a40-207f-495a-855f-592d34f661c7" config-ref="Database_Config">
+			<db:sql><![CDATA[${contact.mgmt.select}]]></db:sql>
+			<db:input-parameters><![CDATA[#[payload]]]></db:input-parameters>
+		</db:select>
+	</sub-flow>
+	<sub-flow name="insertSub" doc:id="07f1d088-00ce-4e59-ae9d-de441d18ffa0">
+		<db:insert doc:name="Insert" doc:id="67e5d663-0ccf-48f8-98c4-b5cd8dbd630e" config-ref="Database_Config">
+			<db:sql><![CDATA[${contact.mgmt.insert}]]></db:sql>
+			<db:input-parameters><![CDATA[#[vars.varRequest]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+	<sub-flow name="bulkInsertSub" doc:id="259a04f8-ea35-4e47-931c-09ef21509d2e" >
+		<db:bulk-insert doc:name="Bulk insert" doc:id="c87aa7dc-9b48-4765-9a75-39d1810a5178" config-ref="Database_Config">
+			<db:sql><![CDATA[${contact.mgmt.insert}]]></db:sql>
+		</db:bulk-insert>
+	</sub-flow>
+	<sub-flow name="updateSub" doc:id="c3266f07-45c9-4fb9-8e32-342355af5a2d" >
+		<db:update doc:name="Update" doc:id="dd8b8c9b-00aa-4725-ab83-94317a53819a" config-ref="Database_Config" >
+			<db:sql ><![CDATA[${contact.mgmt.update}]]></db:sql>
+			<db:input-parameters ><![CDATA[#[vars.varRequest]]]></db:input-parameters>
+		</db:update>
+	</sub-flow>
+	<sub-flow name="bulkUpdateSub" doc:id="ed068649-c288-4641-9f2f-7d94d0591b9d" >
+		<db:bulk-update doc:name="Bulk update" doc:id="1a30f7a6-d7ea-4cca-b0fa-15d4e7edfc8a" config-ref="Database_Config">
+			<db:sql ><![CDATA[${contact.mgmt.update}]]></db:sql>
+		</db:bulk-update>
+	</sub-flow>
+	<sub-flow name="deleteSub" doc:id="e772fdd2-3cca-4dca-93a7-ee7b6e41eeba" >
+		<db:delete doc:name="Delete" doc:id="6d781a4e-9ec8-4f62-b18c-ff7ac53051ef" config-ref="Database_Config" >
+			<db:sql ><![CDATA[${contact.mgmt.delete}]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'Email'	: payload.Email[0]
+}]]]></db:input-parameters>
+		</db:delete>
+	</sub-flow>
+	<sub-flow name="bulkDeleteSub" doc:id="d00df5c1-db60-40c9-b509-bc2db9bc128c" >
+		<db:bulk-delete doc:name="Bulk delete" doc:id="fd1585b9-b674-4fd2-b703-f28c1e7db57d" config-ref="Database_Config">
+			<db:sql ><![CDATA[${contact.mgmt.delete}]]></db:sql>
+		</db:bulk-delete>
+	</sub-flow>
+</mule>

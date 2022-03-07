@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+	<flow name="contactmanagementapi-extractFlow" doc:id="afa4a737-cc12-467f-ae96-c1728c957dc0" >
+		<http:listener doc:name="Listener" doc:id="4c6960ae-6d21-4136-806e-45eb8700c3e7" config-ref="HTTP_Listener_config" path="/extract" allowedMethods="GET" >
+			<ee:repeatable-file-store-stream inMemorySize="1024" />
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="e386b57a-fe9a-49a0-9605-15eb074ca71d" message='#["####### API EXTRACT FLOW EXECUTE #######"]'/>
+		<set-variable value="#[attributes.queryParams.email default '']" doc:name="Set Variable" doc:id="ead0a9cc-ab62-4731-b247-ce0ba7df89b8" variableName="varEmail" />
+		<choice doc:name="Choice" doc:id="1a40bb42-8227-4a98-9516-581eed1aae8c" >
+			<when expression="#[vars.varEmail != '']">
+				<flow-ref doc:name="selectSpecifiedEmailSub" doc:id="eade38f8-b142-4f63-accb-f996795b2f6a" name="selectSpecifiedEmailSub"/>
+			</when>
+			<otherwise>
+				<flow-ref doc:name="selectAllSub" doc:id="e2c794f0-8b7c-45de-a8fb-a0e76d762b49" name="selectAllSub"/>
+			</otherwise>
+		</choice>
+		<choice doc:name="Choice" doc:id="aa4e22fe-f50c-450b-81f7-e36e9fba37e9" >
+			<when expression="#[sizeOf(payload) != 0]">
+				<ee:transform doc:name="Transform Message" doc:id="fa3a88f3-d19a-426a-ba04-560c1bea5921">
+			<ee:message>
+				<ee:set-payload resource="dwl/responseExtract.dwl" />
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="0fffbd11-9c7e-4b72-90e9-c0fd14e94d5a" >
+					<ee:message >
+						<ee:set-payload resource="dwl/responseNoData.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="53cab9d4-7382-42fd-96c1-2e59940e888a" message='#["####### API EXTRACT FLOW COMPLETED #######"]'/>
+	</flow>
+	<flow name="contactmanagementapi-insertFlow" doc:id="d45e2976-fa69-42ff-90a0-a808cea0d76d">
+		<http:listener doc:name="Listener" doc:id="658b8987-f3c9-4ab0-b52a-8dfa75dadbb2" config-ref="HTTP_Listener_config" path="/insert" allowedMethods="POST" />
+		<logger level="INFO" doc:name="Logger" doc:id="f01029fe-9588-4a9b-bee6-86f7d903089a" message='#["####### API INSERT FLOW EXECUTE #######"]'/>
+		<flow-ref doc:name="contactmanagementapi-requestSubFlow" doc:id="b6d4489f-e4a0-4e2e-8f9f-8f7241b82f55" name="contactmanagementapi-requestSubFlow"/>
+		<flow-ref doc:name="selectEmailSub" doc:id="8ea02901-b641-4460-b736-9a004fd1241d" name="selectEmailSub" />
+		<choice doc:name="Choice" doc:id="760bdfe7-5c72-44d7-943d-0dd59ed45bcd">
+			<when expression="#[sizeOf(payload) == 0]">
+				<flow-ref doc:name="insertSub" doc:id="fea0c9cd-5692-4b66-9de2-92588cd8d57e" name="insertSub" />
+				<ee:transform doc:name="Transform Message" doc:id="f8349143-f3ed-43c6-9263-55d9f119a0ab">
+			<ee:message>
+						<ee:set-payload resource="dwl/responseInsertSuccess.dwl" />
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="cb3d65f3-c18c-4565-807d-8a9a0c9e7cbd">
+					<ee:message>
+						<ee:set-payload resource="dwl/responseInsertFailed.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="a2d72935-3b8f-4425-b7b2-5d357e601078" message='#["####### API INSERT FLOW COMPLETED #######"]'/>
+	</flow>
+	<flow name="contactmanagementapi-bulkinsertFlow" doc:id="d3591f32-387c-4529-8a96-cc01b56e794c" >
+		<http:listener doc:name="Listener" doc:id="14dfa7ae-3a72-49bc-a7ee-21f8a5beb22f" config-ref="HTTP_Listener_config" path="/bulkinsert" allowedMethods="POST">
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="b34c457b-809a-493e-ae8f-b02b307ad83e" message='#["####### API BULK INSERT FLOW EXECUTE #######"]'/>
+		<ee:transform doc:name="Transform Message" doc:id="54e48f16-06a4-4c6b-881d-854f6bd2b5f7">
+			<ee:message>
+				<ee:set-payload resource="dwl/requestBulkTransform.dwl" />
+			</ee:message>
+			<ee:variables>
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="bulkInsertSub" doc:id="dcc36abd-85f2-4462-8333-f19aab77345e" name="bulkInsertSub" />
+		<ee:transform doc:name="Transform Message" doc:id="cd5c3ed6-fe5a-4d6f-9c5d-f1565355ccb5">
+			<ee:message>
+				<ee:set-payload resource="dwl/responseBulkInsert.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="ad93ab9b-0052-49b0-9608-ace87571ac75" message='#["####### API BULK INSERT FLOW COMPLETED #######"]'/>
+	</flow>
+	<flow name="contactmanagementapi-updateFlow" doc:id="8c639e2a-d91c-430c-99d9-1d87ccb7a34e" >
+		<http:listener doc:name="Listener" doc:id="f202fdcb-a716-42e6-915b-079b26aabe63" config-ref="HTTP_Listener_config" path="/update" allowedMethods="PATCH"/>
+		<logger level="INFO" doc:name="Logger" doc:id="94b28567-f36b-4451-904c-9d149b291b33" message='#["####### API UPDATE FLOW EXECUTE #######"]'/>
+		<flow-ref doc:name="contactmanagementapi-requestSubFlow" doc:id="8e82abd1-6204-444f-8444-6ef6efa8dd48" name="contactmanagementapi-requestSubFlow"/>
+		<flow-ref doc:name="selectEmailSub" doc:id="9547bfed-9b19-4111-8575-57f1bbd71b5e" name="selectEmailSub"/>
+		<choice doc:name="Choice" doc:id="90955e82-0efc-4fd1-9ed4-ce8130273c07" >
+			<when expression="#[sizeOf(payload) != 0]">
+				<flow-ref doc:name="updateSub" doc:id="4b13d854-0092-423f-a716-73d866de9e3c" name="updateSub"/>
+				<ee:transform doc:name="Transform Message" doc:id="f6f67438-52cd-44e1-bfc9-2ce56e496a4c">
+			<ee:message>
+						<ee:set-payload resource="dwl/responseUpdateSuccess.dwl" />
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="e6ba79aa-9c11-4768-abf3-916f85eef5d4" >
+					<ee:message >
+						<ee:set-payload resource="dwl/responseUpdateFailed.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="3a30bdf5-3174-4315-987b-00e999b8c47a" message='#["####### API UPDATE FLOW COMPLETED #######"]'/>
+	</flow>
+	<flow name="contactmanagementapi-bulkupdateFlow" doc:id="fb8ec332-912f-4b0e-984d-ea8fc5352287" >
+		<http:listener doc:name="Listener" doc:id="72764463-0d94-47b6-b0a0-4869d6fdcc49" config-ref="HTTP_Listener_config" path="/bulkupdate"/>
+		<logger level="INFO" doc:name="Logger" doc:id="512f9102-3444-443a-88c3-3f163f8435ff" message='"####### API BULK UPDATE FLOW EXECUTE #######"'/>
+		<ee:transform doc:name="Transform Message" doc:id="965c088d-969d-442d-9a82-349d937c0195" >
+			<ee:message >
+				<ee:set-payload resource="dwl/requestBulkTransform.dwl" />
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Flow Reference" doc:id="e98b036e-2f54-4a10-8621-553b8d035d4d" name="bulkUpdateSub"/>
+		<ee:transform doc:name="Transform Message" doc:id="d80e8c25-7db4-497e-a697-da3f31a78bee" >
+			<ee:message >
+				<ee:set-payload resource="dwl/responseBulkUpdate.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="44c50c65-71da-4a20-b662-63a89957623c" message='#["####### API BULK UPDATE FLOW COMPLETED #######"]'/>
+	</flow>
+	<flow name="contactmanagementapi-deleteFlow" doc:id="0e2518b8-050e-4443-a017-c87845effbd1" >
+		<http:listener doc:name="Listener" doc:id="3c32ab4d-8bdf-42f7-a98b-d4a5d574ddf1" config-ref="HTTP_Listener_config" path="/delete"/>
+		<logger level="INFO" doc:name="Logger" doc:id="84c30194-c00b-4aec-bcc6-de782fe062ad" message='#["####### API DELETE FLOW EXECUTE #######"]'/>
+		<flow-ref doc:name="selectSpecificEmailSub" doc:id="0fe43f83-6232-4a77-bdb8-3e32aa5ff26d" name="selectEmailSub"/>
+		<choice doc:name="Choice" doc:id="09285c19-37fa-4807-a836-0f16e67a88b7" >
+			<when expression="#[sizeOf(payload) != 0]">
+				<flow-ref doc:name="deleteSub" doc:id="2ea23ca3-d590-4716-b1b5-179e16fbe322" name="deleteSub"/>
+				<ee:transform doc:name="Transform Message" doc:id="042c6cdf-eb80-4f7e-b30b-ac70807753f2">
+			<ee:message>
+						<ee:set-payload resource="dwl/responseDeleteSuccess.dwl" />
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="7aecf330-8f24-4405-a492-da8fc58d920f" >
+					<ee:message >
+						<ee:set-payload resource="dwl/responseDeleteFailed.dwl" />
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="644eda0b-c68e-4bdb-8aaa-c6e2a441da23" message='#["####### API DELETE FLOW COMPLETED #######"]'/>
+	</flow>
+	<flow name="contactmanagementapi-bulkdeleteFlow" doc:id="e8162a68-0b5d-4cfc-90e6-6822694a6287" >
+		<http:listener doc:name="Listener" doc:id="7de30174-3b52-4041-80cf-f33568f4a97f" config-ref="HTTP_Listener_config" path="/bulkdelete" />
+		<logger level="INFO" doc:name="Logger" doc:id="f86770ee-967c-4e6f-ba3d-f4053b6df754" message='#["####### API BULK DELETE FLOW EXECUTE #######"]'/>
+		<ee:transform doc:name="Transform Message" doc:id="252d34bf-9f9a-4315-85db-1695686cadf5" >
+			<ee:message >
+				<ee:set-payload resource="dwl/requestBulkDelete.dwl" />
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="bulkDeleteSub" doc:id="cc6b7a48-d13c-4469-915a-44de3d8f329e" name="bulkDeleteSub" />
+		<ee:transform doc:name="Transform Message" doc:id="055dc6dc-32ae-421c-b7fd-ca8dcc786597" >
+			<ee:message >
+				<ee:set-payload resource="dwl/responseBulkDelete.dwl" />
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="19c5b89e-7e05-45c8-a8ae-ffe5459354c4" message='#["####### API BULK DELETE FLOW COMPLETED #######"]'/>
+	</flow>
+	<sub-flow name="contactmanagementapi-requestSubFlow" doc:id="78254354-097a-474e-961d-4a092e8d3725" >
+		<ee:transform doc:name="Transform Message" doc:id="6d5b4157-dc76-48a6-ae23-ceea9ffaf763">
+			<ee:message>
+				<ee:set-payload resource="dwl/requestCheckEmail.dwl" />
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable resource="dwl/varRequest.dwl" variableName="varRequest" />
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+</mule>

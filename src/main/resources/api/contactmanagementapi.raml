@@ -1,0 +1,74 @@
+#%RAML 1.0
+title: contactmanagmentapi
+mediaType: 
+- application/json
+
+/extract:
+  get:
+    description: |
+      for retrieving contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include extractResponseSample.raml
+              
+/insert:
+  post:
+    description: |
+      for insert of specific contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include successResponseSample.raml  
+
+/bulkinsert:
+  post:
+    description: |
+      for bulk insert of contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include successResponseSample.raml  
+
+/update:
+  patch:
+    description: |
+      for update of specific contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include successResponseSample.raml 
+            
+/bulkupdate:
+  patch:
+    description: |
+      for bulk update of contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include successResponseSample.raml 
+
+/delete:
+  delete:
+    description: |
+      for deletion of specific contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include successResponseSample.raml 
+            
+/bulkdelete:
+  delete:
+    description: |
+      for bulk deletion of contact data
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include successResponseSample.raml 

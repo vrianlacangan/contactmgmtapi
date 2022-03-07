@@ -1,0 +1,20 @@
+%dw 2.0
+
+type auto_78254354_097a_474e_961d_4a092e8d3725_Output_Variables_varRequest = {|
+  FirstName: String, 
+  LastName: String, 
+  DOB: String, 
+  Gender: String, 
+  Title: String, 
+  Number: Number {"typeId": "int"}, 
+  Street: String, 
+  Unit: String, 
+  City: String, 
+  State: String, 
+  Zipcode: String, 
+  Email: String, 
+  EmailPreferred: String, 
+  Cell: String, 
+  CellPreferred: String
+|}
+

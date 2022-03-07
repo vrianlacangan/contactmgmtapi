@@ -1,0 +1,20 @@
+%dw 2.0
+
+type auto_07f1d088_00ce_4e59_ae9d_de441d18ffa0_Input_Payload = {|
+  FirstName: String, 
+  LastName: String, 
+  DOB: String, 
+  Gender: String, 
+  Title: String, 
+  Number: Number {"typeId": "int"}, 
+  Street: String, 
+  Unit: String, 
+  City: String, 
+  State: String, 
+  Zipcode: String, 
+  Email: String, 
+  EmailPreferred: String, 
+  Cell: String, 
+  CellPreferred: String
+|}
+

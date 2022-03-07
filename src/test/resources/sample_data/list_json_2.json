@@ -1,0 +1,72 @@
+[
+    {
+   "Identification":
+   {
+      "FirstName":"Suzzane",
+      "LastName":"Ines",
+      "DOB":"02/27/1995",
+      "Gender":"F",
+      "Title":"Accounting"
+   },
+   "Address":
+   [
+      {
+         "type ":"home",
+         "number":9999,
+         "street":" abcd St",
+         "Unit":"1221",
+         "City":"There",
+         "State":"CA",
+         "zipcode":"1602"
+      }
+   ],
+   "Communication":
+   [
+      {
+         "type":"email",
+         "value":"sjil@sample.com",
+         "preferred":"false"
+      },
+      {
+         "type":"cell",
+         "value":"1232134",
+         "preferred":"true"
+      }
+   ]
+},
+{
+   "Identification":
+   {
+      "FirstName":"Bob",
+      "LastName":"Frederick",
+      "DOB":"06/21/1980",
+      "Gender":"M",
+      "Title":"Manager"
+   },
+   "Address":
+   [
+      {
+         "type ":"home",
+         "number":1234,
+         "street":"blah blah St",
+         "Unit":"1 a",
+         "City":"Somewhere",
+         "State":"WV",
+         "zipcode":"12345"
+      }
+   ],
+   "Communication":
+   [
+      {
+         "type":"email",
+         "value":"sample@sample.com",
+         "preferred":"true"
+      },
+      {
+         "type":"cell",
+         "value":"304-555-8282",
+		  "preferred":"true"
+      }
+   ]
+}
+]

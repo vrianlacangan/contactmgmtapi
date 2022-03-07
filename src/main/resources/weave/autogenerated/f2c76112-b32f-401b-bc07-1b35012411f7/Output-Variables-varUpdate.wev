@@ -1,0 +1,20 @@
+%dw 2.0
+
+type auto_f2c76112_b32f_401b_bc07_1b35012411f7_Output_Variables_varUpdate = {|
+  Email?: String, 
+  FirstName?: String, 
+  Title?: String, 
+  Gender?: String, 
+  City?: String, 
+  Unit?: String, 
+  Number?: String, 
+  DOB?: String, 
+  State?: String, 
+  CellPreferred?: String, 
+  Zipcode?: String, 
+  Street?: String, 
+  LastName?: String, 
+  Cell?: String, 
+  EmailPreferred?: String
+|}
+

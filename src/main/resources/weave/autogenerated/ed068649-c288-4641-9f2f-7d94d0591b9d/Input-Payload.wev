@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_ed068649_c288_4641_9f2f_7d94d0591b9d_Input_Payload = Array<{|  FirstName: String,   LastName: String,   DOB: String,   Gender: String,   Title: String,   Number: Number {"typeId": "int"},   Street: String,   Unit: String,   City: String,   State: String,   Zipcode: String,   Email: String,   EmailPreferred: String,   Cell: String,   CellPreferred: String|}>
+
